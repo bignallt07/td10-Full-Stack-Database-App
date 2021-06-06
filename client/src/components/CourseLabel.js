@@ -3,7 +3,7 @@ import {NavLink} from 'react-router-dom';
 
 export default function CourseLabel(props) {
 
-    const idLink = `course-detail/${props.data.id}`;
+    const idLink = `courses/${props.data.id}`;
 
     return (
         <NavLink to={idLink} className="course--module course--link">
@@ -13,4 +13,7 @@ export default function CourseLabel(props) {
     )
 }
 
-// Add the ID in the href link/id
+/*
+This component render each of the menu items. So each time you add a new one, it will be there
+
+*/

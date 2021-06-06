@@ -7,21 +7,22 @@ export default function CourseDetail(props) {
     const [course, setCourse] = useState({});
     // Gross work around because I needed to set a name to state
     const [name, setName] = useState("");
+    
+    // Create a link for the top menu
+    const updateLink = `/courses/${id}/update`;
 
     /*
     Notes moving forward. To do...
     1. Fix the paragraphs and bulleted list
-    2. Come back and fix the buttons to go delete course and also update course
+    2. Make the delete button work when authenticated
     */
 
-
-     
     useEffect(() => {
         fetch(`http://localhost:5000/api/courses/${id}`)
             .then(res => res.json())
             .then(data => {
                 setCourse(data)
-                setName(data.User.firstName + " " + data.User.lastName)
+                setName(data.User.firstName + " " + data.User.lastName) // Used due to issues with name
             })
     }, []);
 
@@ -29,8 +30,9 @@ export default function CourseDetail(props) {
         <main>
             <div className="actions--bar">
                 <div className="wrap">
-                    <a className="button" href="update-course.html">Update Course</a>
-                    <a className="button" href="#">Delete Course</a>
+                    <NavLink className="button" to={updateLink}>Update Course</NavLink>
+                    <NavLink className="button" to="/">Delete Course</NavLink>
+                    {/* I think the one above is a trick, as user should be signed in */}
                     <NavLink to="/" className="button button-secondary">Return to List</NavLink>
                 </div>
             </div>
@@ -43,7 +45,7 @@ export default function CourseDetail(props) {
                             <h3 className="course--detail--title">Course</h3>
                             <h4 className="course--name">{course.title}</h4>
                             <p>By {name}</p>
-                            <p>{course.description}</p>
+                            {course.description}
                             
                         </div>
                         <div>

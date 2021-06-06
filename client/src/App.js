@@ -12,6 +12,8 @@ import UserSignIn from './components/UserSignIn';
 import UserSignUp from './components/UserSignUp';
 import CreateCourse from './components/CreateCourse';
 import UpdateCourse from './components/UpdateCourse';
+import UserSignOut from './components/UserSignOut';
+import NotFound from './components/NotFound';
 
 // WithContext Components
 import withContext from './Context';
@@ -30,7 +32,8 @@ function App() {
             <Route path="/courses/:id" component={CourseDetail} />
             <Route path="/signin" component={UserSignIn} />
             <Route path="/signup" component={UserSignUp} />
-
+            <Route path="/signout" component={UserSignOut} />
+            <Route component={NotFound} />
           </Switch>
         </div>
     </Router>
