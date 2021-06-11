@@ -1,12 +1,15 @@
 import React, {Component} from 'react';
+import Data from './Data';
 
-const context = React.createContext();
+export const context = React.createContext();
 
 export class Provider extends Component {
 
-    state = {
-        score: 0
-    }
+  // Creating a new instance of Data, which holds the APIConnection class
+    constructor() {
+      super();
+      this.data = new Data();
+    };
 
     async getCourses(link) {
         console.log("Hello from Context");
@@ -20,18 +23,23 @@ export class Provider extends Component {
     }
         
     render() {
-        return (
-            <context.Provider value={{
-                score: this.state.score,
-                courses: this.state.courses,
-                actions: {
-                    getCourses: this.getCourses
-                }
-            }}>
-                {this.props.children}
-            </context.Provider>
-        );
+
+      const value = {
+        data: this.data,
+      };
+
+
+      return (
+          <context.Provider value={value}>
+              {this.props.children}
+          </context.Provider>
+      );
     }
+
+    // signIn = async() => {}
+
+    // signOut = () => {}
+
 }
 
 export const Consumer = context.Consumer;

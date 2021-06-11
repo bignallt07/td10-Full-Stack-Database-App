@@ -3,7 +3,7 @@ import {NavLink} from 'react-router-dom';
 
 export default function CourseDetail(props) {
 
-    const [id, setId] = useState(props.match.params.id);
+    const id = props.match.params.id;
     const [course, setCourse] = useState({});
     // Gross work around because I needed to set a name to state
     const [name, setName] = useState("");
@@ -24,7 +24,7 @@ export default function CourseDetail(props) {
                 setCourse(data)
                 setName(data.User.firstName + " " + data.User.lastName) // Used due to issues with name
             })
-    }, []);
+    }, [id]);
 
     return (
         <main>

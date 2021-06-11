@@ -3,7 +3,7 @@ import {NavLink} from 'react-router-dom';
 
 export default function UpdateCourse(props) {
 
-    const [id, setId] = useState(props.match.params.id);
+    const id = props.match.params.id;
     const [name, setName] = useState("");
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -22,7 +22,7 @@ export default function UpdateCourse(props) {
                 setEstimatedTime(data.estimatedTime);
                 setMaterialsNeeded(data.materialsNeeded);
             })
-    }, []);
+    }, [id]);
 
     // handleChange function
     function handleChange(e) {
@@ -45,7 +45,7 @@ export default function UpdateCourse(props) {
         console.log(estimatedTime);
         // Send PUT request to update the course
         // Must be logged in!
-        
+
     }
 
     

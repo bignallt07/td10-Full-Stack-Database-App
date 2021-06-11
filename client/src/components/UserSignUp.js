@@ -1,13 +1,18 @@
 import React, {useState} from 'react';
-import {NavLink} from 'react-router-dom';
+import {NavLink, useHistory} from 'react-router-dom';
 
-export default function UserSignUp() {
+export default function UserSignUp({context}) {
 
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
+    const [emailAddress, setEmailAddress] = useState("");
     const [password, setPassword] = useState("");
     const [confirmed, setConfirmed] = useState("");
+
+    const [errors, setErrors] = useState([]);
+
+    // History Hook
+    let history = useHistory();
 
     // handleChange function
     function handleChange(e) {
@@ -17,7 +22,7 @@ export default function UserSignUp() {
         } else if (name === "lastName") {
             setLastName(e.target.value);
         } else if (name === "emailAddress") {
-            setEmail(e.target.value);
+            setEmailAddress(e.target.value);
         } else if (name === "password") {
             setPassword(e.target.value);
         } else {
@@ -28,34 +33,61 @@ export default function UserSignUp() {
     // Submit function
     function submitForm(e) {
         e.preventDefault();
-        console.log("First Name: ", firstName);
-        console.log("Last Name: ", lastName);
-        console.log("Email Address: ", email);
-        console.log("Password: ", password);
-        console.log("Confirmed: ", confirmed);
-        const match = (password === confirmed) ? "Matched" : "Did not Match";
-        console.log(match);
-        /*
-        To do...
-        1. If passwords don't match there should be a validator here
-        2. Then we need to do a post request to the API 
-            3. If successful... redirect to the main page, but logged in and updates the context state of Autherized to USER.
-            4. If not, error
-        */
+
+        const user = {
+            firstName,
+            lastName,
+            emailAddress,
+            password
+        }
+
+        // console.log(user);
+
+        context.data.createUser(user)
+            .then(errors => {
+                console.log(errors);
+                if (errors.length) {
+                    setErrors(errors);
+                    console.log(errors);
+                } else {
+                    console.log("A new user was created", firstName, lastName)
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                history.push('/error');
+            })
     }
+
+    function ErrorsDisplay({ errors }) {
+        let errorsDisplay = null;
+
+        if (errors.length) {
+            errorsDisplay = (
+            <div className="validation--errors">
+                <h3>Validation errors</h3>
+                <ul>
+                    {errors.map((error, i) => <li key={i}>{error}</li>)}
+                </ul>
+            </div>
+            );
+        }
+
+        return errorsDisplay;
+        }
 
     return (
         <main>
         <div className="form--centered">
             <h2>Sign Up</h2>
-            
+            <ErrorsDisplay errors={errors} />
             <form onSubmit={submitForm}>
                 <label htmlFor="firstName">First Name</label>
                 <input id="firstName" name="firstName" type="text" value={firstName} onChange={handleChange}/>
                 <label htmlFor="lastName">Last Name</label>
                 <input id="lastName" name="lastName" type="text" value={lastName} onChange={handleChange}/>
                 <label htmlFor="emailAddress">Email Address</label>
-                <input id="emailAddress" name="emailAddress" type="email" value={email} onChange={handleChange}/>
+                <input id="emailAddress" name="emailAddress" type="email" value={emailAddress} onChange={handleChange}/>
                 <label htmlFor="password">Password</label>
                 <input id="password" name="password" type="password" value={password} onChange={handleChange}/>
                 <label htmlFor="confirmPassword">Confirm Password</label>
@@ -73,6 +105,8 @@ export default function UserSignUp() {
 To Do...
 1. When sign up button clicked, create a new account by sending a post request to api/users
 2. Get the form working. Big job on it's own
+
+3. Do I need to write a cancel function?
 
 
 */
