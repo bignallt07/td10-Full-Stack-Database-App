@@ -8,6 +8,10 @@ export default function CreateCourse() {
     const [estimatedTime, setEstimatedTime] = useState("");
     const [materialsNeeded, setMaterialsNeeded] = useState("");
 
+    // If we need to access the user auth. Uncomment this...
+    // const authUser = context.authenticatedUser;
+    // Add context as props parameter for function
+
 
     // handleChange function
     function handleChange(e) {

@@ -11,21 +11,23 @@ export class Provider extends Component {
       this.data = new Data();
     };
 
-    async getCourses(link) {
-        console.log("Hello from Context");
-        // let dataList
-        // await fetch(`http://localhost:5000/api/${link}`)
-        //     .then(res => res.json())
-        //     .then(data => {
-        //         dataList = data
-        //     })
-        // return dataList;
-    }
+    state = {
+      authenticatedUser: null,
+    };
+
         
     render() {
 
+      // Unpacked Authenticated User from State
+      const {authenticatedUser} = this.state;
+
       const value = {
+        authenticatedUser,
         data: this.data,
+        actions: {
+          signIn: this.signIn,
+          signOut: this.signOut
+        }
       };
 
 
@@ -36,9 +38,24 @@ export class Provider extends Component {
       );
     }
 
-    // signIn = async() => {}
 
-    // signOut = () => {}
+    signIn = async (emailAddress, password) => {
+      // Call the getUser function from data
+      const user = await this.data.getUser(emailAddress, password);
+      if (user !== null) {
+        // update logged in user state
+        this.setState(() => {
+          return {
+            authenticatedUser: user,
+          };
+        });
+      }
+      return user;
+    }
+
+    signOut = () => {
+      this.setState({authenticatedUser: null});
+    }
 
 }
 

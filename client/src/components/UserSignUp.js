@@ -50,7 +50,12 @@ export default function UserSignUp({context}) {
                     setErrors(errors);
                     console.log(errors);
                 } else {
-                    console.log("A new user was created", firstName, lastName)
+                    console.log("A new user was created", firstName, lastName);
+                    // Logs the user in upon sign in
+                    context.actions.signIn(emailAddress, password)
+                        .then(() => {
+                            history.push("/")
+                        });
                 }
             })
             .catch(err => {
@@ -74,7 +79,7 @@ export default function UserSignUp({context}) {
         }
 
         return errorsDisplay;
-        }
+    }
 
     return (
         <main>
