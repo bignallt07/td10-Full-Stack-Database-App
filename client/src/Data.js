@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 
 export default class Data {
 
@@ -47,7 +47,6 @@ export default class Data {
 
     // Fetch Methods - USER
     async getUser(emailAddress, password) {
-        console.log(emailAddress);
         const response = await this.apiConnection('/users', 'GET', null, true, {emailAddress, password});
         if (response.status === 200) {
             return response.json().then(data => data);
@@ -64,7 +63,6 @@ export default class Data {
 
     async createUser(user) {
         const response = await this.apiConnection('/users', 'POST', user);
-        console.log(response);
         if (response.status === 201) {
             console.log("success");
             return [];
@@ -81,5 +79,51 @@ export default class Data {
     }
 
     // FETCH METHODS - Courses
+    async createCourse(newCourse, emailAddress, password) {
+        const response = await this.apiConnection('/courses', 'POST', newCourse, true, {emailAddress, password});
+        if (response.status === 201) {
+            console.log("New Course Created");
+            return [];
+        } else if (response.status === 400) {
+            console.log("Error 400");
+            return response.json().then(data => {
+                return data.errors;
+            })
+        } else {
+            throw new Error();
+        }
+    }
+
+    // Update
+    async updateCourse(courseID, updatedContent, emailAddress, password) {
+        const response = await this.apiConnection(`/courses/${courseID}`, 'PUT', updatedContent, true, {emailAddress, password});
+        if (response.status === 204) {
+            console.log("Course Updated");
+            return [];
+        } else if (response.status === 400) {
+            return response.json().then(data => {
+                return data.errors;
+            })
+        } else if (response.status === 403) {
+            console.log("NOT YOU - REDIRECT SHORTLY");
+            // Create component for forbidden
+        }
+        else {
+            throw new Error();
+        }
+    }
+
+    // Delete Course
+    async deleteCourse(courseID, emailAddress, password) {
+        const response = await this.apiConnection(`/courses/${courseID}`, 'DELETE', null, true, {emailAddress, password});
+        if (response.status === 204) {
+            console.log("Course Deleted");
+        } else if (response.status === 403) {
+            console.log("NOT YOU - REDIRECT SHORTLY");
+            // Create component for forbidden
+        } else {
+            throw new Error();
+        }
+    }
 
 }

@@ -33,7 +33,6 @@ export default function UserSignIn(props) {
         const {context} = props;
 
         const {from} = props.location.state || {from: {pathname: '/'}};
-        console.log(from);
         
         // Call Sign in from context actions
         context.actions.signIn(emailAddress, password)
@@ -41,6 +40,7 @@ export default function UserSignIn(props) {
                 console.log(user);
                 if (user === null) {
                     setErrors(errors);
+                    console.log(errors)
                 } else {
                     history.push(from); // From is state from private route - Location of the user
                     console.log(`SUCCESS! ${emailAddress} is now signed in!`);

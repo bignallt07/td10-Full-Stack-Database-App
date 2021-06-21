@@ -6,6 +6,8 @@ export default function Header({context}) {
     // Get Authenticated User State
     const authUser = context.authenticatedUser;
 
+    // console.log(authUser.user.firstName);
+
     return (
         <header>
             <div className="wrap header--flex">

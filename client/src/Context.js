@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Data from './Data';
+import Cookies from 'js-cookie';
 
 export const context = React.createContext();
 
@@ -12,24 +13,28 @@ export class Provider extends Component {
     };
 
     state = {
-      authenticatedUser: null,
-    };
-
+      // Ensure auth user is set to authenticatedUser and if not NULL
+      authenticatedUser: Cookies.getJSON('authenticatedUser') || null,
+      // Not sure about the security here
+      email: Cookies.getJSON('email') || "",
+      pass: Cookies.getJSON("pass") || ""
+    };  
         
     render() {
 
       // Unpacked Authenticated User from State
-      const {authenticatedUser} = this.state;
+      const {authenticatedUser, email, pass} = this.state;
 
       const value = {
         authenticatedUser,
+        email,
+        pass,
         data: this.data,
         actions: {
           signIn: this.signIn,
           signOut: this.signOut
         }
       };
-
 
       return (
           <context.Provider value={value}>
@@ -47,14 +52,30 @@ export class Provider extends Component {
         this.setState(() => {
           return {
             authenticatedUser: user,
+            email: emailAddress,
+            pass: password
           };
         });
+        // Set Cookie - name of cookie, data you want, when it expires
+        Cookies.set('authenticatedUser', JSON.stringify(user), {expires: 1});
+        Cookies.set('email', emailAddress, {expires: 1});
+        Cookies.set('pass', password, {expires: 1});
       }
       return user;
     }
 
     signOut = () => {
-      this.setState({authenticatedUser: null});
+      this.setState(() => {
+        return {
+          authenticatedUser: null,
+          email: "",
+          pass: ""
+        };
+      });
+      // Remove cookie
+      Cookies.remove('authenticatedUser');
+      Cookies.remove('email');
+      Cookies.remove('pass');
     }
 
 }

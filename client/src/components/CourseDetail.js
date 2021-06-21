@@ -3,6 +3,10 @@ import {NavLink} from 'react-router-dom';
 
 export default function CourseDetail(props) {
 
+    // Get Authenticated User State
+    const {context} = props;
+    const authUser = context.authenticatedUser;
+
     const id = props.match.params.id;
     const [course, setCourse] = useState({});
     // Gross work around because I needed to set a name to state
@@ -10,6 +14,7 @@ export default function CourseDetail(props) {
     
     // Create a link for the top menu
     const updateLink = `/courses/${id}/update`;
+
 
     /*
     Notes moving forward. To do...
@@ -26,14 +31,31 @@ export default function CourseDetail(props) {
             })
     }, [id]);
 
+    function deleteCourse() {
+        context.data.deleteCourse(id, context.email, context.pass)
+        // Rather than push history, this will ensure the page is updated.
+        window.location.href = "/";
+
+    }
+
     return (
         <main>
             <div className="actions--bar">
                 <div className="wrap">
-                    <NavLink className="button" to={updateLink}>Update Course</NavLink>
-                    <NavLink className="button" to="/">Delete Course</NavLink>
-                    {/* I think the one above is a trick, as user should be signed in */}
-                    <NavLink to="/" className="button button-secondary">Return to List</NavLink>
+                {/* Ternary below tests if there is user auth, and if the course owner id matches the id of the authenticated user */}
+                    {   
+                        authUser && course.userId === authUser.user.id ? 
+                            <React.Fragment>
+                                <NavLink className="button" to={updateLink}>Update Course</NavLink>
+                                <button className="button" onClick={deleteCourse}>Delete Course</button>
+                                <NavLink to="/" className="button button-secondary">Return to List</NavLink>
+                            </React.Fragment>
+                            :
+                            <React.Fragment>
+                                <NavLink to="/" className="button button-secondary">Return to List</NavLink>
+                            </React.Fragment>
+                    }
+                    
                 </div>
             </div>
 

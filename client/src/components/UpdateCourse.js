@@ -1,14 +1,20 @@
 import React, {useState, useEffect} from 'react';
-import {NavLink} from 'react-router-dom';
+import {NavLink, useHistory} from 'react-router-dom';
 
 export default function UpdateCourse(props) {
 
     const id = props.match.params.id;
-    const [name, setName] = useState("");
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [estimatedTime, setEstimatedTime] = useState("");
     const [materialsNeeded, setMaterialsNeeded] = useState("");
+
+    const [errors, setErrors] = useState([]);
+
+    const {context} = props;
+    const authUser = context.authenticatedUser;
+
+    let history = useHistory();
 
 
     // Fetch info on load
@@ -17,7 +23,6 @@ export default function UpdateCourse(props) {
             .then(res => res.json())
             .then(data => {
                 setTitle(data.title);
-                setName(`${data.User.firstName} ${data.User.lastName}`);
                 setDescription(data.description);
                 setEstimatedTime(data.estimatedTime);
                 setMaterialsNeeded(data.materialsNeeded);
@@ -41,25 +46,57 @@ export default function UpdateCourse(props) {
     // Submit form
     function submitForm(e) {
         e.preventDefault();
-        console.log("Hello Form");
-        console.log(estimatedTime);
-        // Send PUT request to update the course
-        // Must be logged in!
-
+        const courseBody = {
+            title,
+            description,
+            estimatedTime,
+            materialsNeeded,
+            userId: authUser.user.id
+        }
+        context.data.updateCourse(id, courseBody, context.email, context.pass)
+            .then(errors => {
+                if (errors.length > 0) {
+                    setErrors(errors);
+                } else {
+                    history.push(`/courses/${id}`);
+                }
+            })
+            .catch(err => {
+                history.push('/error');
+            }) 
     }
+
+    function ErrorsDisplay({ errors }) {
+        let errorsDisplay = null;
+
+        if (errors.length) {
+            errorsDisplay = (
+            <div className="validation--errors">
+                <h3>Validation errors</h3>
+                <ul>
+                    {errors.map((error, i) => <li key={i}>{error}</li>)}
+                </ul>
+            </div>
+            );
+        }
+
+        return errorsDisplay;
+    }
+
 
     
     return (
         <main>
             <div className="wrap">
                 <h2>Update Course</h2>
+                <ErrorsDisplay errors={errors} />
                 <form onSubmit={submitForm}>
                     <div className="main--flex">
                         <div>
                             <label htmlFor="courseTitle">Course Title</label>
                             <input id="courseTitle" name="courseTitle" type="text" value={title}  onChange={handleChange}/>
 
-                            <p>By {name}</p>
+                            <p>{`${authUser.user.firstName} ${authUser.user.lastName}`}</p>
 
                             <label htmlFor="courseDescription">Course Description</label>
                             <textarea id="courseDescription" name="courseDescription" value={description} onChange={handleChange}></textarea>

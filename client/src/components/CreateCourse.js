@@ -1,12 +1,19 @@
 import React, {useState} from 'react';
-import {NavLink} from 'react-router-dom';
+import {NavLink, useHistory} from 'react-router-dom';
 
-export default function CreateCourse() {
+export default function CreateCourse(props) {
 
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [estimatedTime, setEstimatedTime] = useState("");
     const [materialsNeeded, setMaterialsNeeded] = useState("");
+    const [errors, setErrors] = useState([]);
+
+    const {context} = props;
+    const authUser = context.authenticatedUser;
+
+    let history = useHistory();
+
 
     // If we need to access the user auth. Uncomment this...
     // const authUser = context.authenticatedUser;
@@ -29,28 +36,57 @@ export default function CreateCourse() {
     
     function handleSubmit(e) {
         e.preventDefault();
-        console.log("Hello, we clicked");
+        const newCourseBody = {
+            title,
+            description,
+            estimatedTime,
+            materialsNeeded,
+            userId: authUser.user.id
+        }
         // Perform API post request
+        context.data.createCourse(newCourseBody, context.email, context.pass)
+            .then(errors => {
+                console.log(errors);
+                if (errors.length > 0) {
+                    setErrors(errors);
+                } else {
+                    history.push("/");
+                }
+            })
+            .catch(err => {
+                history.push('/error');
+            }) 
+    }
+
+    function ErrorsDisplay({ errors }) {
+        let errorsDisplay = null;
+
+        if (errors.length) {
+            errorsDisplay = (
+            <div className="validation--errors">
+                <h3>Validation errors</h3>
+                <ul>
+                    {errors.map((error, i) => <li key={i}>{error}</li>)}
+                </ul>
+            </div>
+            );
+        }
+
+        return errorsDisplay;
     }
 
     return (
         <main>
             <div className="wrap">
                 <h2>Create Course</h2>
-                <div className="validation--errors">
-                    <h3>Validation Errors</h3>
-                    <ul>
-                        <li>Please provide a value for "Title"</li>
-                        <li>Please provide a value for "Description"</li>
-                    </ul>
-                </div>
+                <ErrorsDisplay errors={errors} />
                 <form onSubmit={handleSubmit}>
                     <div className="main--flex">
                         <div>
                             <label htmlFor="courseTitle">Course Title</label>
                             <input id="courseTitle" name="courseTitle" type="text" value={title} onChange={handleChange} />
 
-                            <p>By AUTHENTICATED PERSON'S NAME</p>
+                            <p>{`${authUser.user.firstName} ${authUser.user.lastName}`}</p>
 
                             <label htmlFor="courseDescription">Course Description</label>
                             <textarea id="courseDescription" name="courseDescription" value={description} onChange={handleChange}></textarea>
