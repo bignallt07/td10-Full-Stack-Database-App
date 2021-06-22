@@ -1,7 +1,6 @@
-// import React from 'react';
+import {Redirect} from 'react-router-dom';
 
 export default class Data {
-
     /**
      * apiConnection Function
      * @param {*} endpoint - The end of the link for the API
@@ -107,6 +106,7 @@ export default class Data {
         } else if (response.status === 403) {
             console.log("NOT YOU - REDIRECT SHORTLY");
             // Create component for forbidden
+            this.props.history.push("/forbidden");
         }
         else {
             throw new Error();
@@ -121,6 +121,7 @@ export default class Data {
         } else if (response.status === 403) {
             console.log("NOT YOU - REDIRECT SHORTLY");
             // Create component for forbidden
+            return <Redirect to="/forbidden" />
         } else {
             throw new Error();
         }

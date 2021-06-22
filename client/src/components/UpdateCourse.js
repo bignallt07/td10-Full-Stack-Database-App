@@ -55,7 +55,11 @@ export default function UpdateCourse(props) {
         }
         context.data.updateCourse(id, courseBody, context.email, context.pass)
             .then(errors => {
-                if (errors.length > 0) {
+                console.log(errors);
+                if (errors === 403) {
+                    history.push("/forbidden");
+                }
+                else if (errors.length > 0) {
                     setErrors(errors);
                 } else {
                     history.push(`/courses/${id}`);

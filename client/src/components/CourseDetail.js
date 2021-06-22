@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import ReactMarkdown from 'react-markdown'
 import {NavLink} from 'react-router-dom';
 
 export default function CourseDetail(props) {
@@ -67,7 +68,7 @@ export default function CourseDetail(props) {
                             <h3 className="course--detail--title">Course</h3>
                             <h4 className="course--name">{course.title}</h4>
                             <p>By {name}</p>
-                            {course.description}
+                            <ReactMarkdown>{course.description}</ReactMarkdown>
                             
                         </div>
                         <div>
@@ -77,7 +78,7 @@ export default function CourseDetail(props) {
                             <h3 className="course--detail--title">Materials Needed</h3>
                             <ul className="course--detail--list">
                                 {/* Add list of materials */}
-                                {course.materialsNeeded}
+                                <ReactMarkdown>{course.materialsNeeded}</ReactMarkdown>
                             </ul>
                         </div>
                     </div>
