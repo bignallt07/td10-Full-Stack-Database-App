@@ -3,6 +3,7 @@ import {NavLink, useHistory} from 'react-router-dom';
 
 export default function UpdateCourse(props) {
 
+    // Variables and hooks
     const id = props.match.params.id;
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -17,19 +18,36 @@ export default function UpdateCourse(props) {
     let history = useHistory();
 
 
-    // Fetch info on load
+    /**
+     * useEffect - Fetch data about specific course on page load
+     * @returns - Update in state on success, redirect on error
+     */
     useEffect(() => {
         fetch(`http://localhost:5000/api/courses/${id}`)
             .then(res => res.json())
             .then(data => {
-                setTitle(data.title);
-                setDescription(data.description);
-                setEstimatedTime(data.estimatedTime);
-                setMaterialsNeeded(data.materialsNeeded);
+                const author = data.User.id;
+                const user = authUser.user.id;
+                if (data && user === author) {
+                    setTitle(data.title);
+                    setDescription(data.description);
+                    setEstimatedTime(data.estimatedTime);
+                    setMaterialsNeeded(data.materialsNeeded);
+                } else if (data && user !== author) {
+                    history.push("/forbidden");
+                } else {
+                    history.push("/notfound");
+                } 
+            }).catch(err => {
+                history.push("/error");
             })
-    }, [id]);
+    }, [id, history, authUser]);
 
-    // handleChange function
+    /**
+     * 'handleChange'
+     * @param {*} e - event
+     * @returns - updated state
+     */
     function handleChange(e) {
         const name = e.target.name;
         if (name === "courseTitle") {
@@ -43,7 +61,11 @@ export default function UpdateCourse(props) {
         }
     }
 
-    // Submit form
+    /**
+     * 'submitForm'
+     * @param {*} e - event
+     * @returns PUT call on API to update the course 
+     */
     function submitForm(e) {
         e.preventDefault();
         const courseBody = {
@@ -55,7 +77,6 @@ export default function UpdateCourse(props) {
         }
         context.data.updateCourse(id, courseBody, context.email, context.pass)
             .then(errors => {
-                console.log(errors);
                 if (errors === 403) {
                     history.push("/forbidden");
                 }
@@ -70,30 +91,11 @@ export default function UpdateCourse(props) {
             }) 
     }
 
-    function ErrorsDisplay({ errors }) {
-        let errorsDisplay = null;
-
-        if (errors.length) {
-            errorsDisplay = (
-            <div className="validation--errors">
-                <h3>Validation errors</h3>
-                <ul>
-                    {errors.map((error, i) => <li key={i}>{error}</li>)}
-                </ul>
-            </div>
-            );
-        }
-
-        return errorsDisplay;
-    }
-
-
-    
     return (
         <main>
             <div className="wrap">
                 <h2>Update Course</h2>
-                <ErrorsDisplay errors={errors} />
+                {errors ? context.data.ErrorsDisplay({errors}) : null}
                 <form onSubmit={submitForm}>
                     <div className="main--flex">
                         <div>
@@ -119,10 +121,3 @@ export default function UpdateCourse(props) {
         </main>
     )
 }
-
-// Jobs to do
-// Fetch data and add in like on course detail
-// On submit, update the course data
-// Add cancel button
-// Add validation errors to title and description
-// Authenticated user only

@@ -10,6 +10,3 @@ export default function NotFound() {
         </main>
     )
 }
-
-// Fix this later
-// possibily add an ternary to check the error. If then role out the correct page (forbidden v not found)

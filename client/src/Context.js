@@ -15,7 +15,7 @@ export class Provider extends Component {
     state = {
       // Ensure auth user is set to authenticatedUser and if not NULL
       authenticatedUser: Cookies.getJSON('authenticatedUser') || null,
-      // Not sure about the security here
+      // Fix security on future project
       email: Cookies.getJSON('email') || "",
       pass: Cookies.getJSON("pass") || ""
     };  
@@ -25,6 +25,7 @@ export class Provider extends Component {
       // Unpacked Authenticated User from State
       const {authenticatedUser, email, pass} = this.state;
 
+      // Methods to send in the value object
       const value = {
         authenticatedUser,
         email,
@@ -32,7 +33,7 @@ export class Provider extends Component {
         data: this.data,
         actions: {
           signIn: this.signIn,
-          signOut: this.signOut
+          signOut: this.signOut,
         }
       };
 
@@ -43,7 +44,14 @@ export class Provider extends Component {
       );
     }
 
+    // Context Methods
 
+    /**
+     * 'signIn' - 
+     * @param {string} emailAddress 
+     * @param {string} password 
+     * @returns - Updated State with Cookies
+     */
     signIn = async (emailAddress, password) => {
       // Call the getUser function from data
       const user = await this.data.getUser(emailAddress, password);
@@ -64,6 +72,10 @@ export class Provider extends Component {
       return user;
     }
 
+    /**
+     * 'SignOut' - Signs out the user
+     * @returns - updated state and cookie removal
+     */
     signOut = () => {
       this.setState(() => {
         return {

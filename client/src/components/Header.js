@@ -6,8 +6,6 @@ export default function Header({context}) {
     // Get Authenticated User State
     const authUser = context.authenticatedUser;
 
-    // console.log(authUser.user.firstName);
-
     return (
         <header>
             <div className="wrap header--flex">
@@ -32,10 +30,3 @@ export default function Header({context}) {
         </header>
     )
 }
-
-/**
- * Things to do
- * 1. Add a check to see if the user has been activated and if so set their name at the top, otherwise. What we have here
- * 2. When autherizing the user, enable the switch to in and out
- * 
- */

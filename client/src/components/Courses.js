@@ -1,18 +1,22 @@
 import React, {useState, useEffect} from 'react';
 import {NavLink} from 'react-router-dom';
 
+// Import component
 import CourseLabel from './CourseLabel';
 
 export default function Courses({context}) {
 
     const [courses, setCourses] = useState([]);
 
-    // Gets all the courses on pageload
+    /**
+     * useEffect for courses
+     * On update, ALL the courses are fetched from the API and displayed
+     */
     useEffect(() => {
         fetch('http://localhost:5000/api/courses')
             .then(res => res.json())
             .then(data => setCourses(data))
-    }, []);         // Empty aaray is to avoid rerender all the time
+    }, []);         // Dev Note: Empty array is to avoid rerender all the time
 
 
 
@@ -32,8 +36,3 @@ export default function Courses({context}) {
     )
     
 }
-
-/*
-1. Bring the useEffect into context later to get ALL data
-2. Also, fix it so that localhost isn't in the API
-*/

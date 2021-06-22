@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import ReactMarkdown from 'react-markdown'
-import {NavLink} from 'react-router-dom';
+import {NavLink, useHistory} from 'react-router-dom';
 
 export default function CourseDetail(props) {
 
@@ -10,33 +10,37 @@ export default function CourseDetail(props) {
 
     const id = props.match.params.id;
     const [course, setCourse] = useState({});
-    // Gross work around because I needed to set a name to state
     const [name, setName] = useState("");
     
     // Create a link for the top menu
     const updateLink = `/courses/${id}/update`;
 
+    let history = useHistory();
 
-    /*
-    Notes moving forward. To do...
-    1. Fix the paragraphs and bulleted list
-    2. Make the delete button work when authenticated
-    */
-
+    /**
+     * useEffect for CourseDetail
+     * On update, a new call to the API to fetch course detail information
+     */
     useEffect(() => {
         fetch(`http://localhost:5000/api/courses/${id}`)
             .then(res => res.json())
             .then(data => {
-                setCourse(data)
-                setName(data.User.firstName + " " + data.User.lastName) // Used due to issues with name
+                if (data) {
+                    setCourse(data)
+                    setName(data.User.firstName + " " + data.User.lastName)
+                } else {
+                    history.push("/notfound");
+                }
             })
-    }, [id]);
+    }, [id, history]);
 
+    /**
+     * 'deleteCourse' - Includes a call to the delete course method and updates page
+     */
     function deleteCourse() {
         context.data.deleteCourse(id, context.email, context.pass)
         // Rather than push history, this will ensure the page is updated.
         window.location.href = "/";
-
     }
 
     return (
@@ -77,7 +81,6 @@ export default function CourseDetail(props) {
 
                             <h3 className="course--detail--title">Materials Needed</h3>
                             <ul className="course--detail--list">
-                                {/* Add list of materials */}
                                 <ReactMarkdown>{course.materialsNeeded}</ReactMarkdown>
                             </ul>
                         </div>

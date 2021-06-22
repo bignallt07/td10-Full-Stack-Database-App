@@ -3,6 +3,7 @@ import {NavLink, useHistory} from 'react-router-dom';
 
 export default function CreateCourse(props) {
 
+    // State Hooks
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [estimatedTime, setEstimatedTime] = useState("");
@@ -14,13 +15,10 @@ export default function CreateCourse(props) {
 
     let history = useHistory();
 
-
-    // If we need to access the user auth. Uncomment this...
-    // const authUser = context.authenticatedUser;
-    // Add context as props parameter for function
-
-
-    // handleChange function
+    /**
+     * 'handleChange' - Update state on form changes
+     * @param {event} e - Listens to the changes
+     */
     function handleChange(e) {
         const name = e.target.name;
         if (name === "courseTitle") {
@@ -34,6 +32,11 @@ export default function CreateCourse(props) {
         }
     }
     
+    /**
+     * 'handleSubmit' 
+     * Description: Prepares body and calls createCourse API method
+     * @param {*} e - Event
+     */
     function handleSubmit(e) {
         e.preventDefault();
         const newCourseBody = {
@@ -46,7 +49,6 @@ export default function CreateCourse(props) {
         // Perform API post request
         context.data.createCourse(newCourseBody, context.email, context.pass)
             .then(errors => {
-                console.log(errors);
                 if (errors.length > 0) {
                     setErrors(errors);
                 } else {
@@ -58,28 +60,11 @@ export default function CreateCourse(props) {
             }) 
     }
 
-    function ErrorsDisplay({ errors }) {
-        let errorsDisplay = null;
-
-        if (errors.length) {
-            errorsDisplay = (
-            <div className="validation--errors">
-                <h3>Validation errors</h3>
-                <ul>
-                    {errors.map((error, i) => <li key={i}>{error}</li>)}
-                </ul>
-            </div>
-            );
-        }
-
-        return errorsDisplay;
-    }
-
     return (
         <main>
             <div className="wrap">
                 <h2>Create Course</h2>
-                <ErrorsDisplay errors={errors} />
+                {errors ? context.data.ErrorsDisplay({errors}) : null}
                 <form onSubmit={handleSubmit}>
                     <div className="main--flex">
                         <div>
@@ -105,7 +90,3 @@ export default function CreateCourse(props) {
         </main>
     )
 }
-
-// Lots to do here...
-// 1. When clicked, send a post request to api/courses to set up a new link
-// 2. This needs to be hooked up to user authentication

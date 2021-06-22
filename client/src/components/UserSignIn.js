@@ -3,16 +3,18 @@ import {NavLink, useHistory} from 'react-router-dom';
 
 export default function UserSignIn(props) {
 
-    // Credentials
+    // State hooks
     const [emailAddress, setEmailAddress] = useState("");
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState([]);
 
     let history = useHistory();
 
-    // handleChange function
-    // Checks to see what the name of the input is, then update the state
-    // This is called a CONTROLLED COMPONENT
+    /**
+     * 'handleChange' 
+     * @param {*} e - event
+     * @returns Updated State
+     */
     function handleChange(e) {
         const name = e.target.name;
         if (name === "emailAddress") {
@@ -22,14 +24,15 @@ export default function UserSignIn(props) {
         }
     }
 
-    // Tonight.
-    // 2. Look to submit the form with a post request
 
-    // Submit function
+    /**
+     * 'submitForm'
+     * @param {*} e - event
+     * @returns - Auth User set in state, or error
+     */
     function submitForm(e) {
         e.preventDefault();
 
-        // From comes from privateRoute state. Used in history to redirect user to page they were on
         const {context} = props;
 
         const {from} = props.location.state || {from: {pathname: '/'}};
@@ -38,45 +41,22 @@ export default function UserSignIn(props) {
         // Call Sign in from context actions
         context.actions.signIn(emailAddress, password)
             .then(user => {
-                console.log(user);
                 if (user === null) {
                     setErrors(errors);
-                    console.log(errors)
                 } else {
                     history.push(from); // From is state from private route - Location of the user
                     console.log(`SUCCESS! ${emailAddress} is now signed in!`);
                 }
             })
             .catch(err => {
-                console.log(err);
                 history.push('/error');
             })
     }
-
-    function ErrorsDisplay({ errors }) {
-        let errorsDisplay = null;
-
-        if (errors.length) {
-            errorsDisplay = (
-            <div className="validation--errors">
-                <h3>Validation errors</h3>
-                <ul>
-                    {errors.map((error, i) => <li key={i}>{error}</li>)}
-                </ul>
-            </div>
-            );
-        }
-
-        return errorsDisplay;
-    }
-
-    // Have a cancel function if necessary - See React Auth course
 
     return (
         <main>
             <div className="form--centered">
                 <h2>Sign In</h2>
-                <ErrorsDisplay errors={errors} />
                 <form onSubmit={submitForm}>
                     <label htmlFor="emailAddress">Email Address</label>
 
@@ -91,12 +71,4 @@ export default function UserSignIn(props) {
         </main>
     )
 }
-// onclick="event.preventDefault();
-/*
-Come back to later. 
-1. Add user auth
-2. Update the labels and create the sign in methods
-3. Handle Submit and Handle Cancel Methods
-4. Display Errors
 
-*/

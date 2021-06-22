@@ -2,7 +2,12 @@ import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { Consumer } from './Context';
 
-export default ({ component: Component, ...rest }) => {
+/**
+ * PrivateRoute - This checks to see if the user is authenticated before
+ *                loading, if not. The are redirected to sign in.
+ */
+
+export default function PrivateRoute({ component: Component, ...rest }) {
   return (
     <Consumer>
       { context => (

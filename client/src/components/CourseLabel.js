@@ -14,6 +14,5 @@ export default function CourseLabel(props) {
 }
 
 /*
-This component render each of the menu items. So each time you add a new one, it will be there
-
+This component renders each of the menu items. So each time you add a new one, it will be there
 */

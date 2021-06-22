@@ -3,6 +3,7 @@ import {NavLink, useHistory} from 'react-router-dom';
 
 export default function UserSignUp({context}) {
 
+    // State hooks
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [emailAddress, setEmailAddress] = useState("");
@@ -14,7 +15,11 @@ export default function UserSignUp({context}) {
     // History Hook
     let history = useHistory();
 
-    // handleChange function
+    /**
+     * 'handleChange'
+     * @param {*} e - event
+     * @returns - updated State
+     */
     function handleChange(e) {
         const name = e.target.name;
         if (name === "firstName") {
@@ -30,7 +35,11 @@ export default function UserSignUp({context}) {
         }
     }
 
-    // Submit function
+    /**
+     * 'submitForm'
+     * @param {*} e - event
+     * @returns - call to create user and sign in 
+     */
     function submitForm(e) {
         e.preventDefault();
 
@@ -40,8 +49,6 @@ export default function UserSignUp({context}) {
             emailAddress,
             password
         }
-
-        // console.log(user);
 
         context.data.createUser(user)
             .then(errors => {
@@ -64,28 +71,11 @@ export default function UserSignUp({context}) {
             })
     }
 
-    function ErrorsDisplay({ errors }) {
-        let errorsDisplay = null;
-
-        if (errors.length) {
-            errorsDisplay = (
-            <div className="validation--errors">
-                <h3>Validation errors</h3>
-                <ul>
-                    {errors.map((error, i) => <li key={i}>{error}</li>)}
-                </ul>
-            </div>
-            );
-        }
-
-        return errorsDisplay;
-    }
-
     return (
         <main>
         <div className="form--centered">
             <h2>Sign Up</h2>
-            <ErrorsDisplay errors={errors} />
+            {errors ? context.data.ErrorsDisplay({errors}) : null}
             <form onSubmit={submitForm}>
                 <label htmlFor="firstName">First Name</label>
                 <input id="firstName" name="firstName" type="text" value={firstName} onChange={handleChange}/>
@@ -105,13 +95,3 @@ export default function UserSignUp({context}) {
     </main>
     )
 }
-
-/*
-To Do...
-1. When sign up button clicked, create a new account by sending a post request to api/users
-2. Get the form working. Big job on it's own
-
-3. Do I need to write a cancel function?
-
-
-*/
